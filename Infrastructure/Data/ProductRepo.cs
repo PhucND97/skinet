@@ -15,7 +15,7 @@ namespace Infrastructure.Data
         {
             _context = context;
         }
-
+        
         public async Task DbMutationByProduct(Func<Product, Task> f, Product product)
         {
             await f(product);

@@ -15,6 +15,8 @@ using Microsoft.Extensions.Logging;
 using Infrastructure.Entities;
 using Core.Interfaces;
 using Infrastructure.Data;
+using AutoMapper;
+using API.Helpers;
 
 namespace API
 {
@@ -36,6 +38,8 @@ namespace API
 
             services.AddControllers();
             services.AddScoped<IProductRepo, ProductRepo>();
+            services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
+            services.AddAutoMapper(typeof(MappingProfile));
             services.AddDbContext<StoreContext>(options =>
             {
                 // options.UseSqlServer(sqlServerConnection);
@@ -57,6 +61,8 @@ namespace API
             app.UseRouting();
 
             app.UseAuthorization();
+            
+            app.UseStaticFiles();
 
             app.UseEndpoints(endpoints =>
             {
