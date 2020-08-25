@@ -17,6 +17,10 @@ using Core.Interfaces;
 using Infrastructure.Data;
 using AutoMapper;
 using API.Helpers;
+using API.Middlewares;
+using API.Errors;
+using Microsoft.OpenApi.Models;
+using API.Extensions;
 
 namespace API
 {
@@ -37,32 +41,33 @@ namespace API
             string sqliteConnection = _configuration.GetConnectionString("SqliteConnection");
 
             services.AddControllers();
-            services.AddScoped<IProductRepo, ProductRepo>();
-            services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddDbContext<StoreContext>(options =>
             {
                 // options.UseSqlServer(sqlServerConnection);
                 options.UseSqlite(sqliteConnection);
             });
+            services.AddApplicationServices();
+            services.AddSwaggerDocumentation();
         }
 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseMiddleware<ExceptionMiddleware>();
+
+            app.UseStatusCodePagesWithReExecute("/error/{0}");
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthorization();
-            
+
             app.UseStaticFiles();
+
+            app.UseSwaggerDocumentation();
 
             app.UseEndpoints(endpoints =>
             {
