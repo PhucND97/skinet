@@ -11,6 +11,7 @@ namespace Core.Interfaces
         Task<IEnumerable<T>> GetAllAsync();
         Task<T> GetBySpecification(ISpecification<T> spec);
         Task<IEnumerable<T>> GetAllBySpecAsync(ISpecification<T> spec);
+        Task<int> CountAsync(ISpecification<T> spec);
         Task Delete(int id);
         Task Add(T t);
         Task Update(T t);
