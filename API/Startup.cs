@@ -21,6 +21,7 @@ using API.Middlewares;
 using API.Errors;
 using Microsoft.OpenApi.Models;
 using API.Extensions;
+using StackExchange.Redis;
 
 namespace API
 {
@@ -46,6 +47,11 @@ namespace API
             {
                 // options.UseSqlServer(sqlServerConnection);
                 options.UseSqlite(sqliteConnection);
+            });
+            services.AddSingleton<IConnectionMultiplexer>(c =>
+            {
+                var configuration = ConfigurationOptions.Parse(_configuration.GetConnectionString("Redis"), true);
+                return ConnectionMultiplexer.Connect(configuration);
             });
             services.AddApplicationServices();
             services.AddSwaggerDocumentation();
