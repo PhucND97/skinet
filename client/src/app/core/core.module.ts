@@ -7,6 +7,8 @@ import { RouterModule } from '@angular/router';
 import { TestErrorComponent } from './test-error/test-error.component';
 import { ServerErrorComponent } from './server-error/server-error.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { SectionHeaderComponent } from './section-header/section-header.component';
+import { BreadcrumbModule } from 'xng-breadcrumb';
 
 
 @NgModule({
@@ -14,7 +16,8 @@ import { NotFoundComponent } from './not-found/not-found.component';
     NavBarComponent,
     TestErrorComponent,
     ServerErrorComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    SectionHeaderComponent
   ],
   imports: [
     CommonModule,
@@ -22,10 +25,12 @@ import { NotFoundComponent } from './not-found/not-found.component';
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-right',
       preventDuplicates: true
-    })
+    }),
+    BreadcrumbModule
   ],
   exports: [
-    NavBarComponent
+    NavBarComponent,
+    SectionHeaderComponent
   ]
 })
 export class CoreModule { }
