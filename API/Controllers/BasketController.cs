@@ -1,5 +1,8 @@
+using System.Linq;
 using System.Threading.Tasks;
+using API.Dtos;
 using API.Errors;
+using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
 using Infrastructure;
@@ -10,8 +13,10 @@ namespace API.Controllers
     public class BasketController : BaseApiController
     {
         private readonly IBasketRepo _basketRepo;
-        public BasketController(IBasketRepo basketRepo)
+        private readonly IMapper _mapper;
+        public BasketController(IBasketRepo basketRepo, IMapper mapper)
         {
+            _mapper = mapper;
             _basketRepo = basketRepo;
         }
 
@@ -24,11 +29,13 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateBasket(CustomerBasket basket)
+        public async Task<IActionResult> UpdateBasket(CustomerBasketDto basketDto)
         {
-            var updated = await _basketRepo.UpdateBasketAsync(basket);
+            var customerBasket = _mapper.Map<CustomerBasketDto, CustomerBasket>(basketDto);
+            
+            var updated = await _basketRepo.UpdateBasketAsync(customerBasket);
 
-            return Ok(updated);
+            return Ok(customerBasket);
         }
 
         [HttpDelete]

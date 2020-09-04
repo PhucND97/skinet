@@ -5,7 +5,8 @@ using Core.Entities.Identities;
 
 namespace API.Helpers
 {
-    public class MappingProfile : Profile{
+    public class MappingProfile : Profile
+    {
         public MappingProfile()
         {
             CreateMap<Product, ProductToReturnDto>()
@@ -13,6 +14,8 @@ namespace API.Helpers
                     .ForMember(d => d.ProductType, o => o.MapFrom(s => s.ProductType.Name))
                     .ForMember(d => d.PictureUrl, o => o.MapFrom<ProductUrlResolver>());
             CreateMap<Address, AddressDto>().ReverseMap();
+            CreateMap<CustomerBasketDto, CustomerBasket>();
+            CreateMap<BasketItemDto, BasketItem>();
         }
     }
 }
