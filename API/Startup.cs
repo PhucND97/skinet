@@ -22,6 +22,7 @@ using API.Errors;
 using Microsoft.OpenApi.Models;
 using API.Extensions;
 using StackExchange.Redis;
+using Infrastructure.Identity;
 
 namespace API
 {
@@ -48,12 +49,17 @@ namespace API
                 // options.UseSqlServer(sqlServerConnection);
                 options.UseSqlite(sqliteConnection);
             });
+            services.AddDbContext<AppIdentityDbContext>(options => 
+            {
+                options.UseSqlite(_configuration.GetConnectionString("IdentityConnection"));
+            });
             services.AddSingleton<IConnectionMultiplexer>(c =>
             {
                 var configuration = ConfigurationOptions.Parse(_configuration.GetConnectionString("Redis"), true);
                 return ConnectionMultiplexer.Connect(configuration);
             });
             services.AddApplicationServices();
+            services.AddIdentityExtension(_configuration);
             services.AddSwaggerDocumentation();
             services.AddCors(option =>
             {
@@ -78,6 +84,7 @@ namespace API
 
             app.UseCors("CorsPolicy");
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseStaticFiles();
