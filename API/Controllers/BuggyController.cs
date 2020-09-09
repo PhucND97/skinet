@@ -1,5 +1,5 @@
 using API.Errors;
-using Infrastructure.Entities;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

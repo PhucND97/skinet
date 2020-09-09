@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
-using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data
@@ -17,9 +16,9 @@ namespace Infrastructure.Data
         {
             _context = context;
         }
-        public async Task Add(T t)
+        public void Add(T entity)
         {
-            await _context.Set<T>().AddAsync(t);
+            _context.Set<T>().Add(entity);
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
@@ -40,24 +39,24 @@ namespace Infrastructure.Data
             return await ApplySpecification(spec).FirstOrDefaultAsync();
         }
 
-        public async Task Delete(int id)
+        public void Delete(T entity)
         {
-            var toRemove = await Validate(id);
-            await Task.Run(() => _context.Set<T>().Remove(toRemove));
+            _context.Set<T>().Remove(entity);
         }
-        public Task Update(T t)
+        public void Update(T entity)
         {
-            throw new System.NotImplementedException();
+            _context.Set<T>().Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified;
         }
 
         public async Task<T> Validate(int id)
         {
-            var item = _context.Set<T>().FirstOrDefaultAsync(i => i.Id == id);
+            var item = await _context.Set<T>().FirstOrDefaultAsync(i => i.Id == id);
             if (item is null)
             {
                 throw new ArgumentException();
             }
-            return await item;
+            return item;
         }
 
         public async Task<int> CountAsync(ISpecification<T> spec)
