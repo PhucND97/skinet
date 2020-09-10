@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IBasket, IBasketItem } from '../shared/models/baskets';
 import { BasketService } from './basket.service';
