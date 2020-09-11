@@ -15,10 +15,17 @@ const routes: Routes = [
   { path: 'not-found', component: NotFoundComponent, data: { breadcrumb: 'Not Found' } },
   { path: 'shop', loadChildren: () => import('./shop/shop.module').then(mod => mod.ShopModule), data: { breadcrumb: 'Shop' } },
   { path: 'basket', loadChildren: () => import('./basket/basket.module').then(mod => mod.BasketModule), data: { breadcrumb: 'Basket' } },
-  { path: 'checkout',
+  {
+    path: 'checkout',
     canActivate: [AuthGuard],
-    loadChildren: () => import('./checkout/checkout.module').then(mod => mod.CheckoutModule), 
+    loadChildren: () => import('./checkout/checkout.module').then(mod => mod.CheckoutModule),
     data: { breadcrumb: 'Checkout' }
+  },
+  {
+    path: 'orders',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./order/order.module').then(mod => mod.OrderModule),
+    data: { breadcrumb: 'Orders' }
   },
   // tslint:disable-next-line: max-line-length
   { path: 'account', loadChildren: () => import('./account/account.module').then(mod => mod.AccountModule), data: { breadcrumb: { skip: true } } },
