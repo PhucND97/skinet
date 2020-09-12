@@ -8,7 +8,7 @@
     </div>
     <div class="col-4">
       <app-order-totals 
-        [shippingPrice]="this.order.total - this.order.subtotal" 
+        [shippingPrice]="order.shippingPrice" 
         [subtotal]="this.order.subtotal"
         [total]="this.order.total">
       </app-order-totals>

@@ -3,11 +3,12 @@
         <!-- steps coming from cdkStepper -->
         <li class="nav-item" *ngFor="let step of steps; let i = index;">
             <button 
-            (click)="onClick(i)"
-            [disabled]="false"
-            [class.active]="selectedIndex === i"
-            class="nav-link text-uppercase font-weight-bold btn-block" style="padding: 1.20em;">
-            {{step.label}}:{{step.completed}}
+                (click)="onClick(i)"
+                [disabled]="true"
+                [class.active]="selectedIndex === i"
+                class="nav-link text-uppercase font-weight-bold btn-block" 
+                style="padding: 1.20em;">
+            {{step.label}}
         </button>  
         </li>
     </ul>
