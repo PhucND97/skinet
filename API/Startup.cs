@@ -10,6 +10,8 @@ using API.Middlewares;
 using API.Extensions;
 using StackExchange.Redis;
 using Infrastructure.Identity;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace API
 {
@@ -21,25 +23,43 @@ namespace API
             _configuration = configuration;
         }
 
-
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureDevelopmentServices(IServiceCollection services)
         {
-            string sqlServerConnection = _configuration.GetConnectionString("SqlConnection");
-            string sqliteConnection = _configuration.GetConnectionString("SqliteConnection");
-
-            services.AddControllers();
-            services.AddAutoMapper(typeof(MappingProfile));
             services.AddDbContext<StoreContext>(options =>
             {
                 // options.UseSqlServer(sqlServerConnection);
-                options.UseSqlite(sqliteConnection);
+                options.UseSqlite(_configuration.GetConnectionString("DefaultConnection"));
             });
             services.AddDbContext<AppIdentityDbContext>(options => 
             {
                 options.UseSqlite(_configuration.GetConnectionString("IdentityConnection"));
             });
+
+            ConfigureServices(services);
+        }
+
+        public void ConfigureProductionServices(IServiceCollection services)
+        {
+            services.AddDbContext<StoreContext>(options =>
+            {
+                // options.UseSqlServer(sqlServerConnection);
+                options.UseMySql(_configuration.GetConnectionString("DefaultConnection"));
+            });
+            services.AddDbContext<AppIdentityDbContext>(options => 
+            {
+                options.UseMySql(_configuration.GetConnectionString("IdentityConnection"));
+            });
+
+            ConfigureServices(services);
+        }
+
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllers();
+            services.AddAutoMapper(typeof(MappingProfile));
+           
             services.AddSingleton<IConnectionMultiplexer>(c =>
             {
                 var configuration = ConfigurationOptions.Parse(_configuration.GetConnectionString("Redis"), true);
@@ -69,18 +89,23 @@ namespace API
 
             app.UseRouting();
 
-            app.UseCors("CorsPolicy");
+            app.UseCors("CorsPolicy");  
 
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Content")),
+                RequestPath = "/content"
+            });
 
             app.UseSwaggerDocumentation();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }

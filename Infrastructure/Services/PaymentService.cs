@@ -94,8 +94,8 @@ namespace Infrastructure.Services
             }
 
             order.Status = OrderStatus.PaymentFailed;
-            _unitOfWork.Repository<Order>().Update(order);
 
+            _unitOfWork.Repository<Order>().Update(order);
             await _unitOfWork.Complete();
 
             return order;
